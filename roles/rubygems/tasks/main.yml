@@ -1,0 +1,37 @@
+---
+- name: wipe all gems
+  shell: for i in `gem list --no-versions`; gem uninstall -aIx $i; done
+  register: _rubygems_wipe
+  changed_when: _rubygems_wipe.stdout == ""
+  ignore_errors: true
+  when: gem_wipe == True
+
+- name: enforce bundler trust policy
+  shell: bundle --trust-policy MediumSecurity # todo: make configurable, have fine checking
+  when: gem_trust == True
+  tags: upgrade
+
+- name: update gem system
+  shell: yes | gem update --system {{ gem_update_flags }}
+  register: _rubygems_update_system
+  changed_when: _rubygems_update_system.stdout != 'Latest version currently installed. Aborting.'
+  when: gem_update == True
+  tags: upgrade
+
+- name: update existing gems
+  shell: yes | gem update {{ gem_update_flags }}
+  register: _rubygems_update
+  changed_when: not _rubygems_update.stdout.find('Nothing to update') > 0
+  when: gem_update == True
+  tags: upgrade
+
+- name: install missing gems
+  shell: yes | gem install {{ item }} {{ gem_install_flags }}
+  with_items: "{{ install_gems }}"
+  register: _rubygems_install
+
+- name: cleanup
+  shell: gem cleanup
+  register: _rubygems_cleanup
+  changed_when: _rubygems_cleanup.stdout.find('Clean Up Complete')
+  when: gem_cleanup == True
