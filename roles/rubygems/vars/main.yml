@@ -3,7 +3,7 @@ gem_wipe: false
 gem_trust: true
 gem_update: true
 gem_cleanup: true
-gem_update_flags:--no-document
+gem_update_flags: --no-document
 gem_install_flags: --no-document
 
 install_gems:

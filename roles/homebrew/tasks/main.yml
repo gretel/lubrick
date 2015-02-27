@@ -1,0 +1,22 @@
+---
+- homebrew: update_homebrew=yes upgrade_all=yes
+  when: brew_update == True
+
+#- homebrew: name=foo state=head
+#- homebrew: name=foo state=linked
+#- homebrew: name=foo state=absent
+#- homebrew: name=foo,bar state=absent
+
+- homebrew: name=chromium state=linked install_options=with-exec-script
+- homebrew: name=git state=linked install_options=with-blk-sha1,with-brewed-curl,with-pcre,with-brewed-openssl
+
+- homebrew: name=curl state=present install_options=with-libressl
+- homebrew: name=openssh state=present install_options=with-keychain-support,with-ldns
+- homebrew: name=python state=present install_options=without-gdbm,without-sqlite
+
+    #launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.syncthing.plist
+    #launchctl load ~/Library/LaunchAgents/homebrew.mxcl.syncthing.plist
+
+- name: install brews
+  shell: brew install {{ item }}
+  with_items: "{{ install_brews }}"
