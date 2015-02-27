@@ -12,6 +12,7 @@
   roles:
     - { role: rubygems, tags: rubygems }
     - { role: homebrew, tags: homebrew }
+    - { role: direnv, tags: direnv }
 
   post_tasks:
     - shell: echo "done at {{ ansible_date_time.iso8601 }}" | wall
