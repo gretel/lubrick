@@ -1,0 +1,9 @@
+---
+- debug: msg="{{ version }}"
+
+- name: check for ruby version {{ version }}
+  shell: ruby --version
+  register: _ruby_version
+# TODO: abstraction
+  changed_when: _ruby_version.stdout.find(version) != 0
+  ignore_errors: true

@@ -1,6 +1,8 @@
 ---
-- name: check bash (http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-7169)
-  shell: bash -c 'env x=\'() { :;}; echo vulnerable\' bash -c "echo this is a test"'
-  register: _check_bash
-  failed_when: _check_bash.stdout.find('vulnerable')
-  tags: cve
+- template: src=direnvrc.j2 dest={{ ansible_env.HOME }}/.direnvrc mode='u=rw,g=r,o=r'
+
+- file: path={{ ansible_env.HOME }}/.envrc state=touch mode='u=rw,g=r,o=r'
+
+- name: direnv allow home
+  shell: direnv allow {{ ansible_env.HOME }}
+  register: _direnv_allow

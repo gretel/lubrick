@@ -1,2 +1,38 @@
 ---
-project_name: lubrick
+project_name: lubrick-test
+
+ruby_version: 2.2.0
+# python_version: 2.7.8
+
+user_name: Tom Hensel
+user_email: github@jitter.eu
+
+# homebrew_github_api_token: yourtoken
+
+install_gems:
+- bundler
+
+install_brews:
+- autoconf
+- brew-cask
+- direnv
+- duck
+- fish
+- gnupg
+- keybase
+- keychain
+- ldns
+- libyaml
+- nmap
+- node
+- peco
+#- pyenv
+- readline
+- ruby-install
+- syncthing
+- terminal-notifier
+- the_platinum_searcher
+- wakeonlan
+
+# TODO: define
+install_casks:

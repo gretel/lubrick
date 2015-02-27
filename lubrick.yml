@@ -1,5 +1,5 @@
 ---
-- hosts: "{{ selected_hosts | default('crs') }}"
+- hosts: "{{ selected_hosts | default('osx') }}"
 
   gather_facts: true
 
@@ -7,12 +7,14 @@
     - ./vars/project.yml
 
   pre_tasks:
-    - shell: echo "starting at {{ ansible_date_time.iso8601 }}" | wall
+    - shell: echo "ansible starting at {{ ansible_date_time.iso8601 }} for {{ ansible_nodename }}" | wall
 
   roles:
-    - { role: rubygems, tags: rubygems }
-    - { role: homebrew, tags: homebrew }
-    - { role: direnv, tags: direnv }
+    - { role: harden, tags: harden }
+    - { role: ruby, tags: ruby, version: "{{ ruby_version }}" }
+    - { role: rubygems, tags: ruby, gems: "{{ install_gems }}" }
+    - { role: homebrew, tags: homebrew, brews: "{{ install_brews }}" }
+    - { role: direnv, tags: direnv, version: "{{ ruby_version }}" }
 
   post_tasks:
-    - shell: echo "done at {{ ansible_date_time.iso8601 }}" | wall
+    - shell: echo "ansible finished at {{ ansible_date_time.iso8601 }} for {{ ansible_nodename }}" | wall

@@ -1,25 +1,3 @@
 ---
 brew_update: true
 brew_cleanup: true
-
-install_brews:
-- autoconf
-- brew-cask
-- direnv
-- duck
-- fish
-- gnupg
-- keybase
-- keychain
-- ldns
-- libyaml
-- nmap
-- node
-- peco
-- pyenv
-- readline
-- ruby-install
-- syncthing
-- terminal-notifier
-- the_platinum_searcher
-- wakeonlan

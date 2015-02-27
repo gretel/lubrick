@@ -1,0 +1,33 @@
+# https://github.com/zimbatm/direnv
+
+use_ruby() {
+  ruby_version=$1
+  local ruby_dir=$HOME/.rubies/ruby-$ruby_version
+
+  path_add MANPATH "$ruby_dir/share/man"
+
+  export GEM_HOME=$HOME/.gem/ruby/$ruby_version
+  export GEM_PATH=$HOME/.gem/ruby/$ruby_version
+
+  export BUNDLE_BIN=$HOME/.gem/ruby/$ruby_version/bin
+
+  PATH_add "$ruby_dir/bin"
+  PATH_add "$GEM_HOME/bin"
+  PATH_add "$BUNDLE_BIN"
+}
+
+use ruby {{ version }}
+
+# TODO: move to homebrew
+local local_path=/usr/local
+
+# TODO: move to homebrew
+export HOMEBREW_PATH=$local_path
+# export HOMEBREW_GITHUB_API_TOKEN='foobar'
+
+# TODO: move to node
+# export NODE_HOME=$local_path
+# export NODE_PATH=$local_path/lib/node_modules
+
+# TODO: move to sublime
+# export EDITOR='/usr/local/bin/subl'

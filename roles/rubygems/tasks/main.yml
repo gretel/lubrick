@@ -1,35 +1,39 @@
 ---
+- debug: msg="{{ gems }}"
+
+- template: src=gemrc.j2 dest={{ ansible_env.HOME }}/.gemrc mode='u=rw,g=r,o=r'
+
 - name: wipe all gems
   shell: for i in `gem list --no-versions`; gem uninstall -aIx $i; done
-  register: _rubygems_wipe
-  changed_when: _rubygems_wipe.stdout == ""
+  register: _gem_wipe
+  changed_when: _gem_wipe.stdout == ""
   ignore_errors: true
-  when: gem_wipe == True
+  when: ( gem_wipe == True and _ruby_version|changed )
 
 - name: update gem system
   shell: gem update --system {{ gem_update_flags }}
-  register: _rubygems_update_system
-  changed_when: _rubygems_update_system.stdout != 'Latest version currently installed. Aborting.'
-  when: gem_update == True
+  register: _gem_update_system
+  changed_when: _gem_update_system.stdout != 'Latest version currently installed. Aborting.'
+  when: gem_update_system == True
   tags: upgrade
+
+- name: cleanup
+  shell: gem cleanup
+  register: _gem_cleanup
+  changed_when: _gem_cleanup.stdout.find('Clean Up Complete') != -1
+  when: gem_cleanup == True
 
 - name: update existing gems
   shell: gem update {{ gem_update_flags }}
-  register: _rubygems_update
-  changed_when: not _rubygems_update.stdout.find('Nothing to update') > 0
+  register: _gem_update
+  changed_when: not _gem_update.stdout.find('Nothing to update') != -1
   when: gem_update == True
   tags: upgrade
 
 - name: install missing gems
   shell: gem install {{ item }} {{ gem_install_flags }}
-  with_items: "{{ install_gems }}"
-  register: _rubygems_install
+  with_items: "{{ gems }}"
+  register: _gem_install
 
 # - name: enforce bundler trust policy
 #   shell: bundle --trust-policy MediumSecurity # todo: make configurable, have fine checking
-
-- name: cleanup
-  shell: gem cleanup
-  register: _rubygems_cleanup
-  changed_when: _rubygems_cleanup.stdout.find('Clean Up Complete')
-  when: gem_cleanup == True

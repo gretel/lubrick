@@ -1,4 +1,5 @@
 ---
+- debug: msg="{{ brews }}"
 - homebrew: update_homebrew=yes upgrade_all=yes
   when: brew_update == True
 
@@ -7,33 +8,18 @@
 #- homebrew: name=foo state=absent
 #- homebrew: name=foo,bar state=absent
 
-- homebrew: name=chromium state=linked install_options=with-exec-script
-- homebrew: name=git state=linked install_options=with-blk-sha1,with-brewed-curl,with-pcre,with-brewed-openssl
+- include: git.yml name={{ user_name }} email={{ user_email }}
 
+- homebrew: name=chromium state=linked install_options=with-exec-script
 - homebrew: name=curl state=present install_options=with-libressl
 - homebrew: name=openssh state=present install_options=with-keychain-support,with-ldns
 - homebrew: name=python state=present install_options=without-gdbm,without-sqlite
 
+
+# TODO: cask
     #launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.syncthing.plist
     #launchctl load ~/Library/LaunchAgents/homebrew.mxcl.syncthing.plist
 
 - name: install brews
   shell: brew install {{ item }}
-  with_items: "{{ install_brews }}"
-
-
-- name: check bash (http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-7169)
-  shell: bash -c 'env x=\'() { :;}; echo vulnerable\' bash -c "echo this is a test"'
-  register: _check_bash
-  failed_when: _check_bash.stdout.find('vulnerable')
-  tags: cve
-
-
-- name: configure git push.default
-  shell: git config --global push.default simple
-
-- name: configure git user.name
-  shell: git config --global user.name "Tom Hensel"
-
-- name: configure git user.email
-  shell: git config --global user.email github@jitter.eu
+  with_items: "{{ brews }}"

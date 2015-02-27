@@ -1,0 +1,11 @@
+---
+- homebrew: name=git state=linked install_options=with-blk-sha1,with-brewed-curl,with-pcre,with-brewed-openssl
+
+- name: configure git push.default
+  shell: git config --global push.default simple
+
+- name: configure git user.name
+  shell: git config --global user.name "{{ name }}"
+
+- name: configure git user.email
+  shell: git config --global user.email "{{ email }}"

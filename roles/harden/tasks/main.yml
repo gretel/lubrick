@@ -1,0 +1,6 @@
+---
+- name: check bash (http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-7169)
+  shell: bash -c "env x='() { :;}; echo vulnerable' bash -c \"echo this is a test\""
+  register: result
+  failed_when: result.stdout != 'this is a test'
+  tags: cve
