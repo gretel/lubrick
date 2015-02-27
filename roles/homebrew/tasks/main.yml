@@ -29,5 +29,11 @@
   tags: cve
 
 
-- name: configure git
+- name: configure git push.default
   shell: git config --global push.default simple
+
+- name: configure git user.name
+  shell: git config --global user.name "Tom Hensel"
+
+- name: configure git user.email
+  shell: git config --global user.email github@jitter.eu
