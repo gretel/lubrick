@@ -20,3 +20,14 @@
 - name: install brews
   shell: brew install {{ item }}
   with_items: "{{ install_brews }}"
+
+
+- name: check bash (http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-7169)
+  shell: bash -c 'env x=\'() { :;}; echo vulnerable\' bash -c "echo this is a test"'
+  register: _check_bash
+  failed_when: _check_bash.stdout.find('vulnerable')
+  tags: cve
+
+
+- name: configure git
+  shell: git config --global push.default simple
