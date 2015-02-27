@@ -6,11 +6,6 @@
   ignore_errors: true
   when: gem_wipe == True
 
-- name: enforce bundler trust policy
-  shell: bundle --trust-policy MediumSecurity # todo: make configurable, have fine checking
-  when: gem_trust == True
-  tags: upgrade
-
 - name: update gem system
   shell: yes | gem update --system {{ gem_update_flags }}
   register: _rubygems_update_system
@@ -29,6 +24,9 @@
   shell: yes | gem install {{ item }} {{ gem_install_flags }}
   with_items: "{{ install_gems }}"
   register: _rubygems_install
+
+# - name: enforce bundler trust policy
+#   shell: bundle --trust-policy MediumSecurity # todo: make configurable, have fine checking
 
 - name: cleanup
   shell: gem cleanup

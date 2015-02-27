@@ -1,6 +1,5 @@
 ---
 gem_wipe: false
-gem_trust: true
 gem_update: true
 gem_cleanup: true
 gem_update_flags: --no-document
