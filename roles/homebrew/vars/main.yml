@@ -1,3 +1,6 @@
 ---
-brew_update: true
-brew_cleanup: true
+assert_brew_doctor: False
+
+do_brew_upgrade: True
+do_brew_cleanup: True
+do_brew_linkapps: True

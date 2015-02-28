@@ -1,7 +1,8 @@
 ---
+gem_update_system: True
 gem_wipe: false
-gem_update_system: true
-gem_update: true
-gem_cleanup: true
+gem_cleanup: True
+gem_update: True
+
 gem_update_flags: --no-document
 gem_install_flags: --no-document

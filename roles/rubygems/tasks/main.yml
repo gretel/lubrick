@@ -1,13 +1,16 @@
 ---
-- debug: msg="{{ gems }}"
+- debug: msg="{{ gems_install }}"
 
 - template: src=gemrc.j2 dest={{ ansible_env.HOME }}/.gemrc mode='u=rw,g=r,o=r'
+
+- pause: seconds=10 prompt="Are you sure to wipe all gems?"
+  when: ( gem_wipe == True and _ruby_version|changed )
 
 - name: wipe all gems
   shell: for i in `gem list --no-versions`; gem uninstall -aIx $i; done
   register: _gem_wipe
   changed_when: _gem_wipe.stdout == ""
-  ignore_errors: true
+  ignore_errors: True
   when: ( gem_wipe == True and _ruby_version|changed )
 
 - name: update gem system
@@ -30,10 +33,11 @@
   when: gem_update == True
   tags: upgrade
 
-- name: install missing gems
+- name: install gems
   shell: gem install {{ item }} {{ gem_install_flags }}
-  with_items: "{{ gems }}"
+  with_items: gems_install
   register: _gem_install
+  changed_when: _gem_install.stdout.find('Successfully installed') > 0
 
 # - name: enforce bundler trust policy
 #   shell: bundle --trust-policy MediumSecurity # todo: make configurable, have fine checking

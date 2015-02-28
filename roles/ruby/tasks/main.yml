@@ -3,7 +3,16 @@
 
 - name: check for ruby version {{ version }}
   shell: ruby --version
-  register: _ruby_version
-# TODO: abstraction
-  changed_when: _ruby_version.stdout.find(version) != 0
-  ignore_errors: true
+  register: _ruby_version_pre
+  changed_when: _ruby_version_pre.stdout.find('ruby ' + version) != 0
+  ignore_errors: True
+
+- name: build ruby
+  shell: ruby-install --jobs={{ ruby_build_jobs|default(2) }} --cleanup --no-install-deps --no-reinstall ruby {{ version }}
+  register: _ruby_build
+  when: _ruby_version_pre|changed
+
+- name: check for ruby version {{ version }}
+  shell: ruby --version
+  register: _ruby_version_post
+  changed_when: _ruby_version_post.stdout.find('ruby ' + version) != 0

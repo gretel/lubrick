@@ -1,20 +1,30 @@
 ---
 - hosts: "{{ selected_hosts | default('osx') }}"
 
-  gather_facts: true
+  gather_facts: True
 
   vars_files:
-    - ./vars/project.yml
+  - ./vars/project.yml
 
   pre_tasks:
-    - shell: echo "ansible starting at {{ ansible_date_time.iso8601 }} for {{ ansible_nodename }}" | wall
+  - assert:
+      that:
+        - ruby_version != ''
+        - gems_install
+        - homebrew_taps
+        - homebrew_formulae
+        - homebrew_casks
+
+  - shell: echo "ansible starting at {{ ansible_date_time.iso8601 }} for {{ ansible_nodename }}" | wall
+    changed_when: False
 
   roles:
-    - { role: harden, tags: harden }
-    - { role: ruby, tags: ruby, version: "{{ ruby_version }}" }
-    - { role: rubygems, tags: ruby, gems: "{{ install_gems }}" }
-    - { role: homebrew, tags: homebrew, brews: "{{ install_brews }}" }
-    - { role: direnv, tags: direnv, version: "{{ ruby_version }}" }
+  - { role: harden, tags: harden, when: do_harden|default(false) }
+  - { role: homebrew, tags: homebrew }
+  - { role: ruby, tags: ruby, version: "{{ ruby_version }}" }
+  - { role: rubygems, tags: ruby }
+  - { role: direnv, tags: direnv, version: "{{ ruby_version }}" }
 
   post_tasks:
-    - shell: echo "ansible finished at {{ ansible_date_time.iso8601 }} for {{ ansible_nodename }}" | wall
+  - shell: echo "ansible finished at {{ ansible_date_time.iso8601 }} for {{ ansible_nodename }}" | wall
+    changed_when: False

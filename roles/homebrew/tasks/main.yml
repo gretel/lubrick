@@ -1,25 +1,72 @@
 ---
-- debug: msg="{{ brews }}"
-- homebrew: update_homebrew=yes upgrade_all=yes
-  when: brew_update == True
+- name: chown {{ ansible_env.USER }}
+  file: path=/usr/local owner="{{ ansible_env.USER }}" group=staff
+  sudo: True
 
-#- homebrew: name=foo state=head
-#- homebrew: name=foo state=linked
-#- homebrew: name=foo state=absent
-#- homebrew: name=foo,bar state=absent
+- name: xcode-select
+  shell: xcode-select --install
+  register: _setup_xcode
+  changed_when: _setup_xcode.rc == 0
+  failed_when: _setup_xcode.rc < 0
 
-- include: git.yml name={{ user_name }} email={{ user_email }}
+- name: brew doctor
+  shell: brew doctor
+  register: _brew_doctor
+  changed_when: _brew_doctor.rc != 0
+  failed_when: _brew_doctor.stdout != 'Your system is ready to brew.'
+#  when: assert_brew_doctor == True
+  ignore_errors: assert_brew_doctor == False
 
-- homebrew: name=chromium state=linked install_options=with-exec-script
-- homebrew: name=curl state=present install_options=with-libressl
-- homebrew: name=openssh state=present install_options=with-keychain-support,with-ldns
-- homebrew: name=python state=present install_options=without-gdbm,without-sqlite
+- name: brew cask doctor
+  shell: brew cask doctor
+  register: _brew_cask_doctor
+  changed_when: _brew_cask_doctor.rc != 0
+#  when: assert_brew_doctor == True
+  ignore_errors: assert_brew_doctor == False
 
+- name: brew tap
+  homebrew_tap: tap={{ item.key }} state={{ item.value.state | default('present') }}
+  with_dict: homebrew_taps
+  register: _brew_tap
 
-# TODO: cask
-    #launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.syncthing.plist
-    #launchctl load ~/Library/LaunchAgents/homebrew.mxcl.syncthing.plist
+- name: brew upgrade
+  homebrew: update_homebrew=yes upgrade_all=yes
+  register: _brew_upgrade
+  when: do_brew_upgrade == True
 
-- name: install brews
-  shell: brew install {{ item }}
-  with_items: "{{ brews }}"
+- name: brew formulae
+  homebrew: name={{ item.key }} state={{ item.value.state | default('present') }} options={{ item.value.options | default(omit) }}
+  with_dict: homebrew_formulae
+  register: _manage_brews
+
+- name: brew links
+  shell: if [ {{ item.value.link|default('') }} ]; then brew unlink {{ item.key }}; brew link --force {{ item.key }}; fi
+  with_dict: homebrew_formulae
+  register: _manage_links
+  changed_when: _manage_links.stdout.find('symlinks created') > 0
+
+- name: brew cleanup
+  shell: brew cleanup
+  register: _brew_cleanup
+  changed_when: _brew_cleanup.stdout != ''
+  when: do_brew_cleanup == True
+
+- name: brew casks
+  homebrew_cask: name={{ item.key }} state={{ item.value.state | default('present') }} options={{ item.value.options | default(omit) }}
+  with_dict: homebrew_casks
+  register: _homebrew_casks
+  ignore_errors: True
+
+- name: brew cask cleanup
+  shell: brew cask cleanup
+  register: _brew_cask_cleanup
+  changed_when: _brew_cask_cleanup.stdout.find('Nothing to do') < 4
+  when: do_brew_cleanup == True
+
+- name: brew linkapps
+  shell: brew linkapps
+  register: _brew_linkapps
+  when: do_brew_linkapps == True
+  changed_when: False
+
+- include: brews/git.yml name={{ user_name }} email={{ user_email }}

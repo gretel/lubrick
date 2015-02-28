@@ -4,3 +4,10 @@
   register: result
   failed_when: result.stdout != 'this is a test'
   tags: cve
+
+- name: create sysctl.conf
+  file: path=/etc/sysctl.conf state=touch owner=root group=wheel mode='u=rw,g=r,o=r'
+  sudo: True
+
+- sysctl: name=net.link.ether.inet.arp_unicast_lim value=0 sysctl_set=True state=present
+  sudo: True

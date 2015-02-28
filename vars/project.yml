@@ -7,32 +7,77 @@ ruby_version: 2.2.0
 user_name: Tom Hensel
 user_email: github@jitter.eu
 
-# homebrew_github_api_token: yourtoken
+# require sudo/password
+do_harden: false
 
-install_gems:
+gems_install:
 - bundler
 
-install_brews:
-- autoconf
-- brew-cask
-- direnv
-- duck
-- fish
-- gnupg
-- keybase
-- keychain
-- ldns
-- libyaml
-- nmap
-- node
-- peco
-#- pyenv
-- readline
-- ruby-install
-- syncthing
-- terminal-notifier
-- the_platinum_searcher
-- wakeonlan
+homebrew_taps:
+  caskroom/cask:
+  caskroom/versions:
+  domt4/chromium:
+  homebrew/dupes:
+  homebrew/versions:
+  telemachus/desc:
+# TODO: why does this fail
+#  homebrew/head-only:
 
-# TODO: define
-install_casks:
+homebrew_formulae:
+  brew-cask:
+  chromium:
+    options: with-exec-script
+  curl:
+    options: with-exec-script
+  direnv:
+  fish:
+  git:
+    options: with-blk-sha1,with-brewed-curl,with-pcre,with-brewed-openssl
+  gnupg:
+  keybase:
+  libyaml:
+  nmap:
+  node:
+    options: with-openssl,without-completion
+  openssh:
+    options: wwith-keychain-support,with-ldns
+  peco:
+  pyenv:
+    options: without-autoconf,without-pkg-config
+  python:
+    options: ithout-gdbm,without-sqlite
+  readline:
+  ruby:
+    state: absent
+  ruby-build:
+    state: absent
+  ruby-install:
+  syncthing:
+  terminal-notifier:
+  the_platinum_searcher:
+
+homebrew_casks:
+  1password:
+  alfred:
+  chromatic:
+    state: absent
+  devonthink-pro:
+  flux-beta:
+  flux:
+    state: absent
+  imageoptim:
+  iterm2:
+  keka:
+  macdown:
+  ntfs-free:
+  qlcolorcode:
+  qlimagesize:
+  qlmarkdown:
+  qlstephen:
+  qlvideo:
+  quicklook-json:
+  suspicious-package:
+  taskpaper:
+  virtualbox:
+  xtrafinder:
+  zterm:
