@@ -17,9 +17,10 @@ homebrew_taps:
   caskroom/cask:
   caskroom/versions:
   domt4/chromium:
-  homebrew/dupes:
+  #homebrew/dupes:
   homebrew/versions:
   telemachus/desc:
+  raggi/ale:
 # TODO: why does this fail
 #  homebrew/head-only:
 
@@ -79,5 +80,7 @@ homebrew_casks:
   suspicious-package:
   taskpaper:
   virtualbox:
+    state: absent
+  virtualbox-beta:
   xtrafinder:
   zterm:
